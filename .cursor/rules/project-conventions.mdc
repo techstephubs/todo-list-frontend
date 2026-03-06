@@ -1,0 +1,17 @@
+---
+description: Convenções e contexto do projeto Todo List Frontend
+alwaysApply: true
+---
+
+# Todo List Frontend
+
+- Projeto **Angular 19** (prefixo `tl`).
+- Estilo: **CSS** (não SCSS).
+- Branches: **main** (produção), **develop** (desenvolvimento).
+- Repositório: techstephubs/todo-list-frontend.
+
+## Padrões gerais
+
+- Manter código em inglês (nomes de arquivos, variáveis, commits).
+- Commits em inglês, no imperativo (ex.: "add task list component").
+- Preferir componentes e serviços pequenos e focados.
