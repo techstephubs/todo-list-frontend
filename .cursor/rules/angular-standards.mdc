@@ -1,0 +1,14 @@
+---
+description: Padrões Angular (TypeScript e templates)
+globs: "**/*.ts,**/*.html"
+alwaysApply: false
+---
+
+# Padrões Angular
+
+- Usar **standalone components** (padrão do Angular 19).
+- Rotas em `app.routes.ts`; rotas de feature em módulos de rota quando fizer sentido.
+- Serviços com `providedIn: 'root'` salvo quando o escopo for outro.
+- Nomes: componentes em PascalCase, arquivos em kebab-case (ex.: `task-list.component.ts`).
+- Evitar lógica pesada no template; usar métodos ou pipes.
+- Preferir `async` pipe para observables no template em vez de subscribe manual quando possível.
