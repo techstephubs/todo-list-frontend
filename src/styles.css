@@ -1,1 +1,36 @@
-/* You can add global styles to this file, and also import other style files */
+:root {
+  --ai-bg: #030712;
+  --ai-bg-soft: #111827;
+  --ai-surface: rgba(17, 24, 39, 0.72);
+  --ai-border: rgba(56, 189, 248, 0.25);
+  --ai-text: #e5e7eb;
+  --ai-text-muted: #9ca3af;
+  --ai-accent: #38bdf8;
+  --ai-accent-strong: #22d3ee;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100%;
+}
+
+body {
+  font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: var(--ai-text);
+  background:
+    radial-gradient(circle at top right, rgba(14, 116, 144, 0.28), transparent 45%),
+    radial-gradient(circle at bottom left, rgba(59, 130, 246, 0.2), transparent 40%),
+    var(--ai-bg);
+  line-height: 1.5;
+}
+
+a {
+  color: inherit;
+}
