@@ -18,3 +18,11 @@ body {
   background: #070714;
   color: #e2e8f0;
 }
+
+:root {
+  color-scheme: dark;
+}
+
+a {
+  color: inherit;
+}
