@@ -1,0 +1,14 @@
+---
+description: Angular patterns (TypeScript and templates)
+globs: "**/*.ts,**/*.html"
+alwaysApply: false
+---
+
+# Angular
+
+- Use **standalone components** (Angular 19 default).
+- Routes in `app.routes.ts`; feature routes when needed.
+- Services with `providedIn: 'root'` unless another scope is required.
+- Names: components PascalCase, files kebab-case (e.g. `task-list.component.ts`).
+- Avoid heavy logic in templates; use methods or pipes.
+- Prefer `async` pipe for observables in templates when possible.

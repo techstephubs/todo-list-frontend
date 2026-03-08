@@ -1,0 +1,17 @@
+---
+description: Project conventions and context — Todo List Frontend
+alwaysApply: true
+---
+
+# Todo List Frontend
+
+- **Angular 19**, prefix `tl`, styling **CSS** (no SCSS).
+- Branches: **main** (production), **develop** (development).
+- Repo: techstephubs/todo-list-frontend.
+- Full context: see **.cursor/context/PROJECT_MEMORY.md**.
+
+## General
+
+- Code in English (files, variables, commits).
+- Commits in English, imperative (e.g. "add task list component").
+- Prefer small, focused components and services.
