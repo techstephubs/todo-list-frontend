@@ -1,1 +1,119 @@
-<router-outlet />
+<!-- [FRONTEND] Login screen with LinkedIn, email login, and signup flow -->
+<!-- IMPORTANTE: Você deve implementar somente o frontend sem se preocupar com o Backend, preciso ter as telas montadas e com dados mocks nesse momento. Ainda não temos Backend nesse projeto -->
+<section class="auth-shell" aria-live="polite">
+  <div class="auth-card">
+    <header class="auth-header">
+      <p class="auth-kicker">Secure Access</p>
+      <h1>{{ currentView === 'login' ? 'Log in to Todo List' : 'Create your account' }}</h1>
+      <p class="auth-subtitle">
+        {{
+          currentView === 'login'
+            ? 'I want to* log in via LinkedIn or email, or create an account via signup'
+            : 'So that* I can access the Todo List application with a secure identity.'
+        }}
+      </p>
+    </header>
+
+    <div class="toast-stack" role="status" aria-live="polite">
+      <article
+        *ngFor="let toast of toastMessages"
+        class="toast"
+        [class.toast--success]="toast.type === 'success'"
+        [class.toast--error]="toast.type === 'error'"
+        [class.toast--info]="toast.type === 'info'"
+      >
+        <span>{{ toast.text }}</span>
+        <button type="button" (click)="dismissToast(toast.id)" aria-label="Dismiss notification">×</button>
+      </article>
+    </div>
+
+    <ng-container *ngIf="currentView === 'login'; else signupTemplate">
+      <button
+        type="button"
+        class="btn btn--linkedin"
+        (click)="onLinkedInLogin()"
+        [disabled]="isLinkedInLoading || isEmailLoading || isSignupLoading"
+      >
+        {{ isLinkedInLoading ? 'Connecting...' : 'Log in with LinkedIn' }}
+      </button>
+
+      <div class="auth-divider" aria-hidden="true">Log in with email</div>
+
+      <form [formGroup]="loginForm" (ngSubmit)="onEmailLogin()" novalidate>
+        <label for="login-email">Email</label>
+        <input id="login-email" type="email" formControlName="email" autocomplete="email" />
+        <p class="field-error" *ngIf="loginForm.controls.email.touched && loginForm.controls.email.hasError('required')">
+          Email is required.
+        </p>
+        <p class="field-error" *ngIf="loginForm.controls.email.touched && loginForm.controls.email.hasError('email')">
+          Enter a valid email address.
+        </p>
+
+        <label for="login-password">Password</label>
+        <input id="login-password" type="password" formControlName="password" autocomplete="current-password" />
+        <p class="field-error" *ngIf="loginForm.controls.password.touched && loginForm.controls.password.hasError('required')">
+          Password is required.
+        </p>
+        <p class="field-error" *ngIf="loginForm.controls.password.touched && loginForm.controls.password.hasError('minlength')">
+          Password must contain at least 8 characters.
+        </p>
+
+        <label class="checkbox-row" for="remember-me">
+          <input id="remember-me" type="checkbox" formControlName="rememberMe" />
+          <span>Remember me</span>
+        </label>
+
+        <button type="submit" class="btn" [disabled]="isEmailLoading || isLinkedInLoading || isSignupLoading">
+          {{ isEmailLoading ? 'Signing in...' : 'Sign in' }}
+        </button>
+      </form>
+
+      <p class="auth-footer">
+        New here?
+        <a routerLink="/signup">Create an account</a>
+      </p>
+    </ng-container>
+
+    <ng-template #signupTemplate>
+      <form [formGroup]="signupForm" (ngSubmit)="onSignup()" novalidate>
+        <label for="signup-first-name">First name</label>
+        <input id="signup-first-name" type="text" formControlName="firstName" autocomplete="given-name" />
+        <p class="field-error" *ngIf="signupForm.controls.firstName.touched && signupForm.controls.firstName.hasError('required')">
+          First name is required.
+        </p>
+
+        <label for="signup-last-name">Last name</label>
+        <input id="signup-last-name" type="text" formControlName="lastName" autocomplete="family-name" />
+        <p class="field-error" *ngIf="signupForm.controls.lastName.touched && signupForm.controls.lastName.hasError('required')">
+          Last name is required.
+        </p>
+
+        <label for="signup-email">Email</label>
+        <input id="signup-email" type="email" formControlName="email" autocomplete="email" />
+        <p class="field-error" *ngIf="signupForm.controls.email.touched && signupForm.controls.email.hasError('required')">
+          Email is required.
+        </p>
+        <p class="field-error" *ngIf="signupForm.controls.email.touched && signupForm.controls.email.hasError('email')">
+          Enter a valid email address.
+        </p>
+
+        <label for="signup-password">Password</label>
+        <input id="signup-password" type="password" formControlName="password" autocomplete="new-password" />
+        <p class="field-error" *ngIf="signupForm.controls.password.touched && signupForm.controls.password.hasError('required')">
+          Password is required.
+        </p>
+        <p class="field-error" *ngIf="signupForm.controls.password.touched && signupForm.controls.password.hasError('minlength')">
+          Password must contain at least 8 characters.
+        </p>
+
+        <button type="submit" class="btn" [disabled]="isSignupLoading || isLinkedInLoading || isEmailLoading">
+          {{ isSignupLoading ? 'Creating account...' : 'Create account' }}
+        </button>
+      </form>
+
+      <p class="auth-footer">
+        <a routerLink="/login">Already have an account? Log in</a>
+      </p>
+    </ng-template>
+  </div>
+</section>
