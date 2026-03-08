@@ -6,7 +6,8 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "test:auth-flow": "ng test --watch=false --browsers=ChromeHeadless --include='src/app/features/**/*auth*.spec.ts'"
   },
   "private": true,
   "dependencies": {

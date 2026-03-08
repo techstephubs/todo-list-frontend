@@ -1,1 +1,195 @@
-/* You can add global styles to this file, and also import other style files */
+/* Global auth styles */
+:root {
+  --auth-bg: #0a1020;
+  --auth-surface: #121a2b;
+  --auth-surface-soft: #19243a;
+  --auth-text: #eef3ff;
+  --auth-text-muted: #a5b1c9;
+  --auth-border: #2f3b56;
+  --auth-primary: #3f7cff;
+  --auth-primary-hover: #2f69e9;
+  --auth-danger: #ff5d6c;
+  --auth-success: #2eb67d;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  background: var(--auth-bg);
+  color: var(--auth-text);
+}
+
+body {
+  min-height: 100vh;
+}
+
+a {
+  color: var(--auth-primary);
+}
+
+a:hover {
+  color: var(--auth-primary-hover);
+}
+
+button,
+input {
+  font: inherit;
+}
+
+:focus-visible {
+  outline: 3px solid rgba(63, 124, 255, 0.55);
+  outline-offset: 2px;
+}
+
+.auth-page {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+}
+
+.auth-card {
+  width: min(460px, 100%);
+  border: 1px solid var(--auth-border);
+  border-radius: 14px;
+  background: linear-gradient(180deg, var(--auth-surface) 0%, #0f1729 100%);
+  padding: 1.4rem;
+}
+
+.auth-title {
+  margin: 0;
+  font-size: 1.5rem;
+  line-height: 1.2;
+}
+
+.auth-subtitle {
+  margin: 0.5rem 0 0;
+  color: var(--auth-text-muted);
+  font-size: 0.95rem;
+}
+
+.auth-stack {
+  margin-top: 1rem;
+  display: grid;
+  gap: 0.8rem;
+}
+
+.auth-field {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.auth-field label {
+  font-size: 0.86rem;
+  color: var(--auth-text-muted);
+}
+
+.auth-field input {
+  width: 100%;
+  padding: 0.7rem 0.8rem;
+  border-radius: 8px;
+  border: 1px solid var(--auth-border);
+  background: var(--auth-surface-soft);
+  color: var(--auth-text);
+}
+
+.auth-field input[aria-invalid='true'] {
+  border-color: var(--auth-danger);
+}
+
+.auth-error {
+  margin: 0;
+  color: var(--auth-danger);
+  font-size: 0.8rem;
+}
+
+.auth-status {
+  margin: 0;
+  font-size: 0.85rem;
+}
+
+.auth-status.error {
+  color: var(--auth-danger);
+}
+
+.auth-status.success {
+  color: var(--auth-success);
+}
+
+.auth-btn {
+  border: 1px solid transparent;
+  border-radius: 8px;
+  padding: 0.7rem 0.95rem;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.auth-btn.primary {
+  color: #ffffff;
+  background: var(--auth-primary);
+}
+
+.auth-btn.primary:hover:not(:disabled) {
+  background: var(--auth-primary-hover);
+}
+
+.auth-btn.secondary {
+  color: var(--auth-text);
+  background: transparent;
+  border-color: var(--auth-border);
+}
+
+.auth-btn.secondary:hover:not(:disabled) {
+  border-color: var(--auth-primary);
+}
+
+.auth-btn.linkedin {
+  width: 100%;
+  color: #ffffff;
+  background: #0a66c2;
+}
+
+.auth-btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.auth-separator {
+  margin: 0.3rem 0;
+  display: grid;
+  place-items: center;
+  color: var(--auth-text-muted);
+  font-size: 0.8rem;
+}
+
+.auth-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.7rem;
+  flex-wrap: wrap;
+}
+
+.auth-remember {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  color: var(--auth-text-muted);
+  font-size: 0.86rem;
+}
+
+@media (max-width: 640px) {
+  .auth-card {
+    padding: 1rem;
+  }
+
+  .auth-title {
+    font-size: 1.3rem;
+  }
+}
