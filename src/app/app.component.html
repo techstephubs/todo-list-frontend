@@ -2,6 +2,7 @@
   <section class="login-card">
     <h1>Entrar</h1>
     <p class="subtitle">Acesse sua conta para continuar</p>
+    <p class="session-hint" *ngIf="activeSessionUsername">Sessão ativa para {{ activeSessionUsername }}.</p>
 
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" novalidate>
       <div class="form-field">

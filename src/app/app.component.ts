@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { AbstractControl, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators, FormBuilder } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 
 interface LoginSuccessResponse {
   access_token?: string;
@@ -9,13 +9,30 @@ interface LoginSuccessResponse {
   expires_in?: number;
 }
 
+interface LoginErrorResponse {
+  detail?: string;
+  message?: string;
+  error?: string;
+}
+
+interface StoredSession {
+  token: string;
+  tokenType: string;
+  expiresIn: number | null;
+  expiresAt: string | null;
+  username: string;
+  createdAt: string;
+}
+
+const SESSION_STORAGE_KEY = 'auth.session';
+
 @Component({
   selector: 'tl-root',
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   protected readonly loginForm = this.formBuilder.nonNullable.group({
     username: ['', [Validators.required, this.usernameOrEmailValidator()]],
     password: ['', [Validators.required]]
@@ -25,8 +42,13 @@ export class AppComponent {
   protected showPassword = false;
   protected errorMessage = '';
   protected successMessage = '';
+  protected activeSessionUsername = '';
 
   constructor(private readonly formBuilder: FormBuilder) {}
+
+  ngOnInit(): void {
+    this.restoreSession();
+  }
 
   protected get usernameControl(): AbstractControl<string> {
     return this.loginForm.controls.username;
@@ -64,14 +86,12 @@ export class AppComponent {
     try {
       const response = await fetch('/api/v1/auth/login', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+        headers: this.buildRequestHeaders(),
         body: JSON.stringify(payload)
       });
 
       if (!response.ok) {
-        this.handleHttpError(response.status);
+        await this.handleHttpError(response);
         return;
       }
 
@@ -82,17 +102,8 @@ export class AppComponent {
         throw new Error('Token not found in login response');
       }
 
-      localStorage.setItem(
-        'auth.session',
-        JSON.stringify({
-          token,
-          tokenType: data.token_type ?? 'bearer',
-          expiresIn: data.expires_in ?? null,
-          username: payload.username,
-          createdAt: new Date().toISOString()
-        })
-      );
-
+      this.persistSession(payload.username, token, data.token_type ?? 'bearer', data.expires_in ?? null);
+      this.activeSessionUsername = payload.username;
       this.successMessage = 'Login realizado com sucesso.';
       this.loginForm.markAsPristine();
     } catch {
@@ -102,13 +113,96 @@ export class AppComponent {
     }
   }
 
-  private handleHttpError(statusCode: number): void {
-    if (statusCode === 401) {
-      this.errorMessage = 'Usuário ou senha incorretos';
+  private buildRequestHeaders(): HeadersInit {
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json'
+    };
+
+    const existingSession = this.getStoredSession();
+    if (existingSession?.token) {
+      headers.Authorization = `Bearer ${existingSession.token}`;
+    }
+
+    return headers;
+  }
+
+  private async handleHttpError(response: Response): Promise<void> {
+    const backendMessage = await this.readBackendErrorMessage(response);
+
+    if (response.status === 401) {
+      this.errorMessage = backendMessage || 'Usuário ou senha incorretos';
       return;
     }
 
-    this.errorMessage = 'Sistema indisponível, tente mais tarde';
+    this.errorMessage = backendMessage || 'Sistema indisponível, tente mais tarde';
+  }
+
+  private async readBackendErrorMessage(response: Response): Promise<string | null> {
+    try {
+      const data = (await response.json()) as LoginErrorResponse;
+      const candidate = data.detail ?? data.message ?? data.error;
+      return typeof candidate === 'string' && candidate.trim() ? candidate.trim() : null;
+    } catch {
+      return null;
+    }
+  }
+
+  private persistSession(username: string, token: string, tokenType: string, expiresIn: number | null): void {
+    const createdAtDate = new Date();
+    const expiresAt = typeof expiresIn === 'number' ? new Date(createdAtDate.getTime() + expiresIn * 1000).toISOString() : null;
+
+    const session: StoredSession = {
+      token,
+      tokenType,
+      expiresIn,
+      expiresAt,
+      username,
+      createdAt: createdAtDate.toISOString()
+    };
+
+    localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(session));
+  }
+
+  private restoreSession(): void {
+    const session = this.getStoredSession();
+    if (!session) {
+      return;
+    }
+
+    this.activeSessionUsername = session.username;
+    this.successMessage = `Sessão restaurada para ${session.username}.`;
+  }
+
+  private getStoredSession(): StoredSession | null {
+    const raw = localStorage.getItem(SESSION_STORAGE_KEY);
+    if (!raw) {
+      return null;
+    }
+
+    try {
+      const parsed = JSON.parse(raw) as Partial<StoredSession>;
+      if (!parsed.token || !parsed.username) {
+        localStorage.removeItem(SESSION_STORAGE_KEY);
+        return null;
+      }
+
+      if (parsed.expiresAt && new Date(parsed.expiresAt).getTime() <= Date.now()) {
+        localStorage.removeItem(SESSION_STORAGE_KEY);
+        return null;
+      }
+
+      return {
+        token: parsed.token,
+        tokenType: parsed.tokenType ?? 'bearer',
+        expiresIn: parsed.expiresIn ?? null,
+        expiresAt: parsed.expiresAt ?? null,
+        username: parsed.username,
+        createdAt: parsed.createdAt ?? new Date().toISOString()
+      };
+    } catch {
+      localStorage.removeItem(SESSION_STORAGE_KEY);
+      return null;
+    }
   }
 
   private usernameOrEmailValidator(): ValidatorFn {
