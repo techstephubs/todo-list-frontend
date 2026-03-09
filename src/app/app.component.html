@@ -1,1 +1,54 @@
-<router-outlet />
+<main class="login-page">
+  <section class="login-card">
+    <h1>Entrar</h1>
+    <p class="subtitle">Acesse sua conta para continuar</p>
+    <p class="session-hint" *ngIf="activeSessionUsername">Sessão ativa para {{ activeSessionUsername }}.</p>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" novalidate>
+      <div class="form-field">
+        <label for="username">E-mail ou usuário</label>
+        <input
+          id="username"
+          type="text"
+          formControlName="username"
+          autocomplete="username"
+          placeholder="usuario@teste"
+        />
+        <small class="field-error" *ngIf="usernameControl.touched && usernameControl.hasError('required')">
+          Campo obrigatório.
+        </small>
+        <small class="field-error" *ngIf="usernameControl.touched && usernameControl.hasError('invalidEmailFormat')">
+          Informe um e-mail valido.
+        </small>
+      </div>
+
+      <div class="form-field">
+        <label for="password">Senha</label>
+        <div class="password-wrapper">
+          <input
+            id="password"
+            [type]="showPassword ? 'text' : 'password'"
+            formControlName="password"
+            autocomplete="current-password"
+            placeholder="Digite sua senha"
+          />
+          <button type="button" class="ghost-button" (click)="togglePasswordVisibility()">
+            {{ showPassword ? 'Ocultar senha' : 'ver senha' }}
+          </button>
+        </div>
+        <small class="field-error" *ngIf="passwordControl.touched && passwordControl.hasError('required')">
+          Campo obrigatório.
+        </small>
+      </div>
+
+      <a href="#" class="forgot-password" (click)="onForgotPassword($event)">Esqueci minha senha</a>
+
+      <button type="submit" class="submit-button" [disabled]="loginForm.invalid || isLoading">
+        {{ isLoading ? 'Entrando...' : 'Entrar' }}
+      </button>
+
+      <p class="form-feedback error" *ngIf="errorMessage">{{ errorMessage }}</p>
+      <p class="form-feedback success" *ngIf="successMessage">{{ successMessage }}</p>
+    </form>
+  </section>
+</main>
