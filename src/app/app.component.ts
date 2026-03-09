@@ -86,7 +86,9 @@ export class AppComponent implements OnInit {
     try {
       const response = await fetch('/api/v1/auth/login', {
         method: 'POST',
-        headers: this.buildRequestHeaders(),
+        headers: {
+          'Content-Type': 'application/json'
+        },
         body: JSON.stringify(payload)
       });
 
@@ -105,6 +107,7 @@ export class AppComponent implements OnInit {
       this.persistSession(payload.username, token, data.token_type ?? 'bearer', data.expires_in ?? null);
       this.activeSessionUsername = payload.username;
       this.successMessage = 'Login realizado com sucesso.';
+      this.passwordControl.setValue('');
       this.loginForm.markAsPristine();
     } catch {
       this.errorMessage = 'Sistema indisponível, tente mais tarde';
@@ -113,18 +116,6 @@ export class AppComponent implements OnInit {
     }
   }
 
-  private buildRequestHeaders(): HeadersInit {
-    const headers: Record<string, string> = {
-      'Content-Type': 'application/json'
-    };
-
-    const existingSession = this.getStoredSession();
-    if (existingSession?.token) {
-      headers.Authorization = `Bearer ${existingSession.token}`;
-    }
-
-    return headers;
-  }
 
   private async handleHttpError(response: Response): Promise<void> {
     const backendMessage = await this.readBackendErrorMessage(response);
